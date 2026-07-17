@@ -6,8 +6,8 @@
 #include "utils/NX.hpp"
 #include "utils/Time.hpp"
 
-// Maximum number of entries to process in one iteration
-#define MAX_PROCESS_ENTRIES 32768
+// Page size for pdmqryQueryPlayEvent (keep modest to limit peak RAM in applet mode)
+#define MAX_PROCESS_ENTRIES 1024
 
 namespace NX {
     std::vector<PD_Session> PlayData::getPDSessions(TitleID titleID, AccountUid userID, u64 start_ts, u64 end_ts) {
@@ -337,6 +337,7 @@ namespace NX {
                     if (summary["firstPlayed"] != nullptr && summary["lastPlayed"] != nullptr && summary["playtime"] != nullptr && summary["launches"] != nullptr) {
                         PlayStatistics * stats = new PlayStatistics;
                         stats->titleID = title["id"];
+                        stats->userID = {user["id"][0], user["id"][1]};
                         stats->firstPlayed = summary["firstPlayed"];
                         stats->lastPlayed = summary["lastPlayed"];
                         stats->playtime = summary["playtime"];
@@ -360,7 +361,7 @@ namespace NX {
         return ret;
     }
 
-    PlayData::PlayData() : currentProgress(0), maxProgress(1), progressCallback(nullptr) {
+    PlayData::PlayData() : importTimestamp(0), currentProgress(0), maxProgress(1), progressCallback(nullptr) {
         // Read in all data simultaneously
         this->pdmThread = std::async(std::launch::async, [this]() -> PlayEventsAndSummaries {
             return this->readPlayDataFromPdm();
@@ -534,19 +535,34 @@ namespace NX {
         PdmPlayStatistics tmp;
         pdmqryQueryPlayStatisticsByApplicationIdAndUserAccountId(titleID, userID, false, &tmp);
         PlayStatistics * stats = new PlayStatistics;
-        if (tmp.first_timestamp_user != 0 && tmp.last_timestamp_user != 0) {
-            stats->firstPlayed = tmp.first_timestamp_user;
-            stats->lastPlayed = tmp.last_timestamp_user;
-        } else {
-            auto it = std::find_if(this->summaries.begin(), this->summaries.end(), [titleID](auto s){ return (s->titleID == titleID); });
-            if (it != this->summaries.end()) {
-                stats->firstPlayed = (*it)->firstPlayed;
-                stats->lastPlayed = (*it)->lastPlayed;
+        stats->titleID = titleID;
+        stats->userID = userID;
+        stats->firstPlayed = tmp.first_timestamp_user;
+        stats->lastPlayed = tmp.last_timestamp_user;
+        stats->playtime = tmp.playtime / 1000 / 1000 / 1000; // PdmPlayStatistics playtime is in ns
+        stats->launches = tmp.total_launches;
+
+        // Merge imported All Activity summaries (migration / combine JSON).
+        // Use max for playtime/launches so same-console re-import does not double-count;
+        // on a new console PDM is near zero so imported totals win.
+        auto it = std::find_if(this->summaries.begin(), this->summaries.end(), [titleID, userID](PlayStatistics * s) {
+            return (s->titleID == titleID && s->userID == userID);
+        });
+        if (it != this->summaries.end()) {
+            PlayStatistics * imp = *it;
+            if (stats->firstPlayed == 0 || (imp->firstPlayed != 0 && imp->firstPlayed < stats->firstPlayed)) {
+                stats->firstPlayed = imp->firstPlayed;
+            }
+            if (imp->lastPlayed > stats->lastPlayed) {
+                stats->lastPlayed = imp->lastPlayed;
+            }
+            if (imp->playtime > stats->playtime) {
+                stats->playtime = imp->playtime;
+            }
+            if (imp->launches > stats->launches) {
+                stats->launches = imp->launches;
             }
         }
-
-        stats->playtime = tmp.playtime / 1000 / 1000 / 1000; //the unit of playtime in PdmPlayStatistics is ns
-        stats->launches = tmp.total_launches;
         return stats;
     }
 

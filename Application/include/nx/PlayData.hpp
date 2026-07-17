@@ -50,6 +50,7 @@ namespace NX {
     // PdmPlayStatistics but only the necessary things
     struct PlayStatistics {
         TitleID titleID;        // TitleID of these stats
+        AccountUid userID;      // User these stats belong to (set for imported summaries)
         u64 firstPlayed;        // Timestamp of first launch
         u64 lastPlayed;         // Timestamp of last play (exit)
         u64 playtime;           // Total playtime in seconds
