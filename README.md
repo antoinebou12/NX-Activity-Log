@@ -90,7 +90,7 @@ If you are seeing wildly incorrect values/believe the playtime shown is incorrec
     * Screenshots of the incorrect data (make sure the date/time and playtime are visible!)
     * The playlog.txt acquired from the last steps
 
-_Note: If the data shown under All Activity is incorrect there is nothing I can do! These values are read directly from the Switch and aren't the result of any calculations._
+_Note: Stock All Activity values come from the Switch PDM API. After Export/Import, this fork also merges imported summaries so migrated totals can appear in All Activity and Details._
 
 ## Known Issues
 
