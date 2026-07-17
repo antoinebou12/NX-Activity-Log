@@ -109,14 +109,14 @@ $(OFILES): | libs
 define crule
 $(OBJDIR)/%.o: $(1)/%.c | $$$$(@D)
 	@echo Compiling $$*.o...
-	@mkdir -p $$(OBJDIR)/$$(*D) $$(DEPDIR)/$$(*D)
-	@$(CC) -MMD -MP -MF $$(DEPDIR)/$$*.d $$(CFLAGS) -o $$@ -c $$<
+	@mkdir -p $$(OBJDIR)/$$(*D)
+	@$(CC) $$(CFLAGS) -o $$@ -c $$<
 endef
 define cpprule
 $(OBJDIR)/%.o: $(1)/%.cpp | $$$$(@D)
 	@echo Compiling $$*.o...
-	@mkdir -p $$(OBJDIR)/$$(*D) $$(DEPDIR)/$$(*D)
-	@$(CXX) -MMD -MP -MF $$(DEPDIR)/$$*.d $$(CXXFLAGS) -o $$@ -c $$<
+	@mkdir -p $$(OBJDIR)/$$(*D)
+	@$(CXX) $$(CXXFLAGS) -o $$@ -c $$<
 endef
 
 $(foreach source,$(SOURCES),$(eval $(call crule,$(source))))

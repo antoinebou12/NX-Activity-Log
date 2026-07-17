@@ -6,7 +6,7 @@
 
 Fork of [tallbl0nde/NX-Activity-Log](https://github.com/tallbl0nde/NX-Activity-Log) with continued maintenance. Incorporates [PR #76](https://github.com/tallbl0nde/NX-Activity-Log/pull/76) / [zdm65477730/NX-Activity-Log](https://github.com/zdm65477730/NX-Activity-Log) (HOS 16+ fixes through 21.x) and rebuilds against modern libnx for **HOS 22.0.5**.
 
-### Firmware / CFW requirements
+## Firmware / CFW requirements
 
 * **HOS 22.0.5 (and 22.x):** Atmosphere **≥ 1.11.0** (1.11.2 recommended for 22.5.0). Homebrew launch on 22.0.0+ relies on Atmosphere's `am` compatibility patches.
 * **HOS 21.0.0+:** Rebuild with **libnx ≥ 4.10.0** (TLS ABI change). This release targets current libnx (4.11.x / latest).
@@ -83,7 +83,7 @@ For automation or scripts, parse `export.json` (`users` → `titles` → `events
 
 If you are seeing wildly incorrect values/believe the playtime shown is incorrect within Recent Activity or the Details screen, please do the following:
 
-1. Download and run the .nro from [here](https://github.com/zdm65477730/PlayEventParser/releases)
+1. Download and run the .nro from [PlayEventParser releases](https://github.com/zdm65477730/PlayEventParser/releases)
 2. Leave it run; if it appears to be frozen leave it for up to a minute!
 3. Once it is done there should be a playlog.txt at the root of your SD card.
 4. Create an issue with the following:

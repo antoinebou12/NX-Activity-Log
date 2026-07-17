@@ -34,11 +34,12 @@ jobs:
           fetch-tags: true
           submodules: recursive
       - name: Setup ENV parameters
+        id: version
         run: |
           VER_FILE=Application/Makefile
           VERSION=$(awk '/^VER_MAJOR/{print $3}' $VER_FILE).$(awk '/^VER_MINOR/{print $3}' $VER_FILE).$(awk '/^VER_MICRO/{print $3}' $VER_FILE)
-          echo "TAG=v${VERSION}" > "${GITHUB_ENV}"
-          echo "RELEASE_NAME=NX-Activity-Log v${VERSION}" >> "${GITHUB_ENV}"
+          echo "tag=v${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "release_name=NX-Activity-Log v${VERSION}" >> "${GITHUB_OUTPUT}"
         shell: bash
       - name: Build
         run: |
@@ -49,15 +50,15 @@ jobs:
         if: github.event_name != 'issue_comment'
         uses: actions/upload-artifact@v4
         with:
-          name: NX-Activity-Log-${{ env.TAG }}
+          name: NX-Activity-Log-${{ steps.version.outputs.tag }}
           path: ./sdcard/switch/NX-Activity-Log/NX-Activity-Log.nro
           if-no-files-found: error
       - name: Upload Release Asset
         if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '/release-action')
         uses: softprops/action-gh-release@v2.0.9
         with:
-          name: ${{ env.RELEASE_NAME }}
-          tag_name: ${{ env.TAG }}
+          name: ${{ steps.version.outputs.release_name }}
+          tag_name: ${{ steps.version.outputs.tag }}
           draft: false
           prerelease: false
           generate_release_notes: yes
