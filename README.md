@@ -67,6 +67,18 @@ _Note: The data shown in Recent Activity and Details may be slightly inaccurate 
 ![All Activity View](/Images/sc_activity.jpg)
 ![Detailed View](/Images/sc_detailed.jpg)
 
+## Backup, Import & Transfer
+
+Use Settings → **Export** / **Import** to move play data between consoles (or keep a backup).
+
+1. **Backup:** Settings → Export. Copy `/switch/NX-Activity-Log/export.json` off the SD card.
+2. **Restore / combine:** Copy that file to the other Switch as `/switch/NX-Activity-Log/import.json`, then Settings → Import, and **restart the app**.
+3. Users are matched by **username**. Imported play sessions feed Recent Activity and Details; imported All Activity summaries are merged with on-console PDM totals (larger playtime/launches win, so a same-console re-import does not double-count).
+4. **Delete imported data** (Settings) removes `/switch/NX-Activity-Log/importedData.json` only — it does **not** wipe Nintendo’s system play log. Clearing system PDM requires NAND-level tools and is outside this app.
+5. Export/import is **not** a full NAND clone via HacDiskMount / NxNandManager; use JSON for app-visible history, or migrate system saves separately if you need stock profile totals.
+
+For automation or scripts, parse `export.json` (`users` → `titles` → `events` + `summary`).
+
 ## Reporting Incorrect Data
 
 If you are seeing wildly incorrect values/believe the playtime shown is incorrect within Recent Activity or the Details screen, please do the following:
@@ -83,14 +95,15 @@ _Note: If the data shown under All Activity is incorrect there is nothing I can 
 ## Known Issues
 
 * **User Page replacement** may be incompatible on newer firmware / Atmosphere builds. Prefer launching from the homebrew menu (title mode) or Album until a forwarder fix lands.
-* The main issue at the moment is that a few users' playtime is incorrect. This is due to the Switch being factory reset at some point and/or some games not requiring a user to be selected to play it. _I am looking into how to fix the former!_
+* Playtime can look wrong after a factory reset (event history wiped) and/or for games that do not require a user. This fork attributes no-user sessions to the currently viewed user for Recent Activity and Details; use Export/Import to restore older history when you have a backup.
 * Having a lot of games logged can cause too much memory usage when launched via User Page/Album, leading to out of memory crashes and/or missing images/text.
   * If it impacts you, launch this app in title mode for now.
+  * Hide Titles skips icons when more than 200 titles are listed to reduce crashes.
 * Having a lot of games logged can cause a long pause when loading the 'All Activity' screen (improved in the PR #76 / fork sync, but large libraries may still be slow).
 
 ## Translations
 
-If you'd like to translate the app or fix an issue with a translation, please make a pull request to [this repo](https://github.com/zdm65477730/NX-Activity-Log-Translations)! I'll add all the relevant code here (if need be) once I see the request :)
+If you'd like to translate the app or fix an issue with a translation, please make a pull request to this repository (or open an issue). Japanese and other languages ship in `Application/romfs/lang/`.
 
 ## Credits
 

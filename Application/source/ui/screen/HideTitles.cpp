@@ -82,16 +82,19 @@ namespace Screen {
         this->list = new Aether::List(30, 88, 830, 559);
         this->list->setScrollBarColour(this->app->theme()->mutedLine());
 
-        // Populate list with all titles
+        // Populate list with all titles (skip icons on large libraries to avoid applet OOM)
         this->hiddenIDs = this->app->config()->hiddenTitles();
         std::vector<NX::Title *> titles = this->app->titleVector();
         std::sort(titles.begin(), titles.end(), [](NX::Title * lhs, NX::Title * rhs) {
             return (lhs->name() < rhs->name());
         });
+        const bool loadIcons = (titles.size() <= 200);
 
         for (NX::Title * title : titles) {
             CustomElm::ListHide * l = new CustomElm::ListHide(title->name(), Utils::formatHexString(title->titleID()));
-            l->setImage(title->imgPtr(), title->imgSize());
+            if (loadIcons) {
+                l->setImage(title->imgPtr(), title->imgSize());
+            }
             l->setIDColour(this->app->theme()->mutedText());
             l->setLineColour(this->app->theme()->mutedLine());
             l->setTitleColour(this->app->theme()->text());
