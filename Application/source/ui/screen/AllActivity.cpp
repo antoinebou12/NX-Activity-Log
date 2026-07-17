@@ -131,6 +131,13 @@ namespace Screen {
             // Get statistics and append adjustment if needed
             NX::RecentPlayStatistics *ps = this->app->playdata()->getRecentStatisticsForTitleAndUser(t[i]->titleID(), std::numeric_limits<u64>::min(), std::numeric_limits<u64>::max(), this->app->activeUser()->ID());
             NX::PlayStatistics *ps2 = this->app->playdata()->getStatisticsForUser(t[i]->titleID(), this->app->activeUser()->ID());
+            // Prefer imported/PDM All Activity totals when they exceed event-derived values
+            if (ps2->playtime > ps->playtime) {
+                ps->playtime = ps2->playtime;
+            }
+            if (ps2->launches > ps->launches) {
+                ps->launches = ps2->launches;
+            }
             std::vector<AdjustmentValue>::iterator it = std::find_if(adjustments.begin(), adjustments.end(), [this, t, i](AdjustmentValue val) {
                 return (val.titleID == t[i]->titleID() && val.userID == this->app->activeUser()->ID());
             });

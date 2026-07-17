@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <iterator>
 
-// Maximum number of titles to read using pdm
-#define MAX_TITLES 32768
+// Page size for title enumeration (paginated; keep modest for applet RAM)
+#define MAX_TITLES 1024
 
 // Comparison of AccountUids
 bool operator == (const AccountUid &a, const AccountUid &b) {
@@ -43,12 +43,17 @@ namespace Utils::NX {
 
         Language lang;
         switch (sl) {
+            case SetLanguage_JA:
+                lang = Japanese;
+                break;
+
             case SetLanguage_ENGB:
             case SetLanguage_ENUS:
                 lang = English;
                 break;
 
             case SetLanguage_FR:
+            case SetLanguage_FRCA:
                 lang = French;
                 break;
 
@@ -61,6 +66,7 @@ namespace Utils::NX {
                 break;
 
             case SetLanguage_PT:
+            case SetLanguage_PTBR:
                 lang = Portugese;
                 break;
 
@@ -69,6 +75,7 @@ namespace Utils::NX {
                 break;
 
             case SetLanguage_ES:
+            case SetLanguage_ES419:
                 lang = Spanish;
                 break;
 

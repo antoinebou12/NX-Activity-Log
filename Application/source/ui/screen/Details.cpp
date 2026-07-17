@@ -652,6 +652,13 @@ namespace Screen {
         std::vector<AdjustmentValue> adjustments = this->app->config()->adjustmentValues();
         NX::PlayStatistics * pss = this->app->playdata()->getStatisticsForUser(this->app->activeTitle()->titleID(), this->app->activeUser()->ID());
         NX::RecentPlayStatistics *ps = this->app->playdata()->getRecentStatisticsForTitleAndUser(this->app->activeTitle()->titleID(), std::numeric_limits<u64>::min(), std::numeric_limits<u64>::max(), this->app->activeUser()->ID());
+        // Prefer imported/PDM All Activity totals when they exceed event-derived values
+        if (pss->playtime > ps->playtime) {
+            ps->playtime = pss->playtime;
+        }
+        if (pss->launches > ps->launches) {
+            ps->launches = pss->launches;
+        }
         std::vector<AdjustmentValue>::iterator it = std::find_if(adjustments.begin(), adjustments.end(), [this](AdjustmentValue val) {
             return (val.titleID == this->app->activeTitle()->titleID() && val.userID == this->app->activeUser()->ID());
         });
