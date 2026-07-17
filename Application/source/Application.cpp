@@ -30,16 +30,16 @@ namespace Main {
         this->config_ = new Config();
         this->config_->readConfig();
 
-        // Set language
-        if (!Utils::Lang::setLanguage(this->config_->gLang())) {
-            this->window->exit();
-        }
+        // Set language (window is created later — defer exit if language fails)
+        bool langOk = Utils::Lang::setLanguage(this->config_->gLang());
 
         this->playdata_ = new NX::PlayData();
 
         // Set PlayData progress callback and start async loading
         this->playdata_->setProgressCallback([this](int current, int max) {
-            this->scloadingScreen->setProgress((float)current / (float)max);
+            if (this->scloadingScreen != nullptr && max > 0) {
+                this->scloadingScreen->setProgress((float)current / (float)max);
+            }
         });
 
         this->titleIdx = 0;
@@ -87,6 +87,10 @@ namespace Main {
         this->window = new Aether::Window("NX-Activity-Log", 1280, 720, [](const std::string message, const bool important) {});
         // this->window->showDebugInfo(true);
 
+        if (!langOk) {
+            this->window->exit();
+        }
+
         // Create overlays
         this->dtpicker = nullptr;
         this->periodpicker = new Aether::PopupList("common.view.heading"_lang);
@@ -128,7 +132,9 @@ namespace Main {
         app->titles = Utils::NX::getTitleObjects(app->users);
         app->playdata_->setCurrentProgress(app->playdata_->getCurrentProgress() + 1);
         progress = (float)app->playdata_->getCurrentProgress() / max;
-        app->scloadingScreen->setProgress(progress);
+        if (app->scloadingScreen != nullptr) {
+            app->scloadingScreen->setProgress(progress);
+        }
 
         // Get missing titles from PlayData
         std::vector<NX::Title *> missing = app->playdata_->getMissingTitles(app->titles);
@@ -137,10 +143,14 @@ namespace Main {
         }
         app->playdata_->setCurrentProgress(app->playdata_->getCurrentProgress() + 1);
         progress = (float)app->playdata_->getCurrentProgress() / max;
-        app->scloadingScreen->setProgress(progress);
+        if (app->scloadingScreen != nullptr) {
+            app->scloadingScreen->setProgress(progress);
+        }
         // Loading complete, switch to main screen
         if (progress >= 1.0f) {
-            app->scloadingScreen->removeAllElements();
+            if (app->scloadingScreen != nullptr) {
+                app->scloadingScreen->removeAllElements();
+            }
             if (app->isUserPage_) {
                 // Skip UserSelect screen if launched via user page
                 app->setScreen(app->config_->lScreen());

@@ -377,9 +377,16 @@ namespace Screen {
                 ls->setTimeString(first + " - " + last + (outRange ? "*" : ""));
                 ls->setPlaytimeString(Utils::playtimeToString(playtime));
 
-                // Add percentage of total playtime
+                // Add percentage of all-time playtime (clamp so session never exceeds 100%)
                 std::string str;
-                double percent = 100 * ((double)playtime / ((pss->playtime == 0 || pss->playtime < playtime) ? playtime : ps->playtime));
+                u64 totalPlaytime = pss->playtime;
+                if (totalPlaytime == 0) {
+                    totalPlaytime = playtime;
+                }
+                double percent = (totalPlaytime == 0) ? 0.0 : 100.0 * ((double)playtime / (double)totalPlaytime);
+                if (percent > 100.0) {
+                    percent = 100.0;
+                }
                 percent = Utils::roundToDecimalPlace(percent, 2);
                 if (percent < 0.01) {
                     str = "< 0.01%";

@@ -93,8 +93,8 @@ namespace Main {
                 bool allLaunched = (stats2->launches != 0);
                 tJson["summary"]["firstPlayed"] = stats2->firstPlayed;
                 tJson["summary"]["lastPlayed"] = stats2->lastPlayed;
-                tJson["summary"]["playtime"] = stats->playtime;
-                tJson["summary"]["launches"] = stats->launches;
+                tJson["summary"]["playtime"] = stats2->playtime;
+                tJson["summary"]["launches"] = stats2->launches;
                 delete stats;
                 delete stats2;
 

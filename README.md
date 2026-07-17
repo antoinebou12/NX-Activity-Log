@@ -4,7 +4,13 @@
 
 [Download](https://github.com/antoinebou12/NX-Activity-Log/releases)
 
-Fork of [tallbl0nde/NX-Activity-Log](https://github.com/tallbl0nde/NX-Activity-Log) with continued maintenance (including HOS 22 / libnx updates). Based in part on work from [zdm65477730/NX-Activity-Log](https://github.com/zdm65477730/NX-Activity-Log).
+Fork of [tallbl0nde/NX-Activity-Log](https://github.com/tallbl0nde/NX-Activity-Log) with continued maintenance. Incorporates [PR #76](https://github.com/tallbl0nde/NX-Activity-Log/pull/76) / [zdm65477730/NX-Activity-Log](https://github.com/zdm65477730/NX-Activity-Log) (HOS 16+ fixes through 21.x) and rebuilds against modern libnx for **HOS 22.0.5**.
+
+### Firmware / CFW requirements
+
+* **HOS 22.0.5 (and 22.x):** Atmosphere **≥ 1.11.0** (1.11.2 recommended for 22.5.0). Homebrew launch on 22.0.0+ relies on Atmosphere's `am` compatibility patches.
+* **HOS 21.0.0+:** Rebuild with **libnx ≥ 4.10.0** (TLS ABI change). This release targets current libnx (4.11.x / latest).
+* **Older firmwares:** The same binary is intended to run under current Atmosphere on earlier HOS versions; use title/hbmenu launch rather than User Page if the forwarder path fails.
 
 Curious about what's next? See the original to-do list on [Trello](https://trello.com/b/HaJ1THGq/nx-activity-log)
 
@@ -49,8 +55,9 @@ This application currently has the following features:
   * Checks for updates automatically and displays an icon if one is available
   * Update completely within the app
 * User Page Replacement
-  * Requires LayeredFS and either Atmosphere 0.10.0+, ReiNX or SXOS (or build and copy the forwarder to your CFW-specific titles folder)
+  * Requires LayeredFS and Atmosphere 0.10.0+ (or build and copy the forwarder to your CFW-specific titles folder)
   * **Requires .nro to be at /switch/NX-Activity-Log/NX-Activity-Log.nro**
+  * Currently unreliable on HOS 21+/22.x — use title/hbmenu launch if User Page override crashes (see Known Issues)
 
 _Note: The data shown in Recent Activity and Details may be slightly inaccurate over larger periods of time (ie. off by a few minutes) but I will try to improve this over time. If activity is not being shown for earlier periods of time it is likely your switch has been reset at some point, which wipes the data used to calculate playtime in this way._
 
@@ -75,11 +82,11 @@ _Note: If the data shown under All Activity is incorrect there is nothing I can 
 
 ## Known Issues
 
+* **User Page replacement** may be incompatible on newer firmware / Atmosphere builds. Prefer launching from the homebrew menu (title mode) or Album until a forwarder fix lands.
 * The main issue at the moment is that a few users' playtime is incorrect. This is due to the Switch being factory reset at some point and/or some games not requiring a user to be selected to play it. _I am looking into how to fix the former!_
 * Having a lot of games logged can cause too much memory usage when launched via User Page/Album, leading to out of memory crashes and/or missing images/text.
-  * I think I know a way to fix this but if it impacts you you'll have to launch this app in title mode for now.
-* Having a lot of games logged causes a long pause/freeze when loading the 'All Activity' screen
-  * Once I learn how to handle threads this won't be a problem :)
+  * If it impacts you, launch this app in title mode for now.
+* Having a lot of games logged can cause a long pause when loading the 'All Activity' screen (improved in the PR #76 / fork sync, but large libraries may still be slow).
 
 ## Translations
 
@@ -89,11 +96,12 @@ If you'd like to translate the app or fix an issue with a translation, please ma
 
 I'd like to thank:
 
+* [zdm65477730](https://github.com/zdm65477730) for continued HOS 16–21 maintenance merged via [PR #76](https://github.com/tallbl0nde/NX-Activity-Log/pull/76)
 * AtlasNX for [SimpleIniParser](https://github.com/AtlasNX/SimpleIniParser)
   * Used to read/write the config file
 * nlohmann for his [JSON library](https://github.com/nlohmann/json)
-* Switchbrew for [nx-hbloader](https://github.com/switchbrew/nx-hbloader)
-  * Adapted to override User Page with this app
+* Switchbrew for [nx-hbloader](https://github.com/switchbrew/nx-hbloader) and [libnx](https://github.com/switchbrew/libnx)
+  * Adapted to override User Page with this app; rebuilds require libnx ≥ 4.10.0 for HOS 21+/22.x
 * Anyone else involved with the development of homebrew tools and reverse engineering of the Switch!
 
 ## Support <3

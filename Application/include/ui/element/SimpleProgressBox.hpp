@@ -10,19 +10,16 @@ namespace CustomScreen {
             Aether::Rectangle * rect;
 
             // Message
-            //Aether::TextBlock * heading;
+            Aether::TextBlock * heading;
 
             // Progress bar
             Aether::RoundProgressBar * bar;
-
-            // Progress bar value
-            //Aether::Text * value;
 
         public:
             // Constructs a new (blank) SimpleProgressBox
             SimpleProgressBox();
 
-            //void setHeading(const std::string &);
+            void setHeading(const std::string &);
             void setValue(const double);
 
             void setBackgroundColour(const Aether::Colour);

@@ -43,13 +43,13 @@ FORWARDER	:=	$(ROMFS)/exefs.nsp
 #---------------------------------------------------------------------------------
 VER_MAJOR	:= 1
 VER_MINOR	:= 5
-VER_MICRO	:= 8
+VER_MICRO	:= 9
 
 #---------------------------------------------------------------------------------
 # Options for .nacp information
 #---------------------------------------------------------------------------------
 APP_TITLE   := 	NX Activity Log
-APP_AUTHOR	:= 	zdm65477730
+APP_AUTHOR	:= 	antoinebou12
 APP_VERSION	:=	$(VER_MAJOR).$(VER_MINOR).$(VER_MICRO)
 ICON 		:= 	icon.jpg
 
@@ -109,11 +109,13 @@ $(OFILES): | libs
 define crule
 $(OBJDIR)/%.o: $(1)/%.c | $$$$(@D)
 	@echo Compiling $$*.o...
+	@mkdir -p $$(dir $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d))
 	@$(CC) -MMD -MP -MF $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d) $$(CFLAGS) -o $$@ -c $$<
 endef
 define cpprule
 $(OBJDIR)/%.o: $(1)/%.cpp | $$$$(@D)
 	@echo Compiling $$*.o...
+	@mkdir -p $$(dir $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d))
 	@$(CXX) -MMD -MP -MF $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d) $$(CXXFLAGS) -o $$@ -c $$<
 endef
 

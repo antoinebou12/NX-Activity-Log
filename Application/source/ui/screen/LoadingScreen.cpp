@@ -21,7 +21,7 @@ namespace Screen {
         this->progressBox_->setBarBackgroundColour(app_->theme()->mutedLine());
         this->progressBox_->setBarForegroundColour(app_->theme()->accent());
         this->progressBox_->setTextColour(app_->theme()->text());
-        //this->progressBox_->setHeading("common.loading.init"_lang);
+        this->progressBox_->setHeading("common.loading.init"_lang);
         this->progressBox_->setValue(0.0);
         this->addElement(this->progressBox_);
     }
@@ -30,28 +30,28 @@ namespace Screen {
 
     void LoadingScreen::setProgress(float progress) {
         if (progress < 0) {
-            //this->progressBox_->setHeading("common.loading.failed"_lang);
+            this->progressBox_->setHeading("common.loading.failed"_lang);
             this->progressBox_->setValue(0.0);
             return;
         }
 
-        // progress should be 0.0f ~ 1.0f, and progressBox vaule should be percentage range (0.0f - 100.0f)
+        // progress should be 0.0f ~ 1.0f; progress box value is 0–100
         this->progressBox_->setValue(progress * 100.0);
 
-        if (progress >= 1.0f) {
+        if (progress < 0.05f) {
+            this->progressBox_->setHeading("common.loading.init"_lang);
+        } else if (progress < 0.35f) {
+            this->progressBox_->setHeading("common.loading.readPDM"_lang);
+        } else if (progress < 0.5f) {
+            this->progressBox_->setHeading("common.loading.readImport"_lang);
+        } else if (progress < 0.75f) {
+            this->progressBox_->setHeading("common.loading.mergeData"_lang);
+        } else if (progress < 1.0f) {
+            this->progressBox_->setHeading("common.loading.finish"_lang);
+        } else {
+            this->progressBox_->setHeading("common.loading.done"_lang);
             this->progressBox_->setValue(100.0);
             this->progressBox_->close();
         }
-        /*
-        if (progress < 0.05f) ;//this->progressBox_->setHeading("common.loading.init"_lang);
-        else if (progress < 0.35f) ;//this->progressBox_->setHeading("common.loading.readPDM"_lang);
-        else if (progress < 0.5f) ;//this->progressBox_->setHeading("common.loading.readImport"_lang);
-        else if (progress < 0.75f) ;//this->progressBox_->setHeading("common.loading.mergeData"_lang);
-        else if (progress < 1.0f) ;//this->progressBox_->setHeading("common.loading.finish"_lang);
-        else {
-            //this->progressBox_->setHeading("common.loading.done"_lang);
-            this->progressBox_->setValue(100.0);
-            this->progressBox_->close();
-        }*/
     }
 }

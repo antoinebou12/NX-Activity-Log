@@ -95,7 +95,7 @@ namespace Screen {
     }
 
     void Settings::prepareMessageBox() {
-        //delete this->msgbox;
+        delete this->msgbox;
         this->msgbox = new Aether::MessageBox();
         this->msgbox->setLineColour(this->app->theme()->mutedLine());
         this->msgbox->setRectangleColour(this->app->theme()->altBG());

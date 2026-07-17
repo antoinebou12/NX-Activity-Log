@@ -42,7 +42,7 @@ namespace Main {
             Aether::Window * window;
 
             // Screens of the app
-            Screen::LoadingScreen * scloadingScreen;
+            Screen::LoadingScreen * scloadingScreen = nullptr;
             Screen::AdjustPlaytime * scAdjustPlaytime;
             Screen::AllActivity * scAllActivity;
             Screen::CustomTheme * scCustomTheme;
