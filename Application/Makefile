@@ -109,14 +109,14 @@ $(OFILES): | libs
 define crule
 $(OBJDIR)/%.o: $(1)/%.c | $$$$(@D)
 	@echo Compiling $$*.o...
-	@mkdir -p $$(dir $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d))
-	@$(CC) -MMD -MP -MF $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d) $$(CFLAGS) -o $$@ -c $$<
+	@mkdir -p $$(DEPDIR)/$$(*D)
+	@$(CC) -MMD -MP -MF $$(DEPDIR)/$$*.d $$(CFLAGS) -o $$@ -c $$<
 endef
 define cpprule
 $(OBJDIR)/%.o: $(1)/%.cpp | $$$$(@D)
 	@echo Compiling $$*.o...
-	@mkdir -p $$(dir $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d))
-	@$(CXX) -MMD -MP -MF $$(@:$$(OBJDIR)/%.o=$$(DEPDIR)/%.d) $$(CXXFLAGS) -o $$@ -c $$<
+	@mkdir -p $$(DEPDIR)/$$(*D)
+	@$(CXX) -MMD -MP -MF $$(DEPDIR)/$$*.d $$(CXXFLAGS) -o $$@ -c $$<
 endef
 
 $(foreach source,$(SOURCES),$(eval $(call crule,$(source))))
@@ -138,6 +138,8 @@ endif
 ifeq ($(wildcard $(CURDIR)/libs/SimpleIniParser/LICENSE),)
 	@$(error 'Application/libs/SimpleIniParser' missing: Please run 'git submodule update --init!)
 endif
+	@mkdir -p $(CURDIR)/libs/Aether/build/deps $(CURDIR)/libs/Aether/build/objs
+	@mkdir -p $(OBJDIR) $(DEPDIR)
 	@$(MAKE) -s -C $(CURDIR)/libs/Aether/
 	@$(MAKE) -s -C $(CURDIR)/libs/SimpleIniParser/
 

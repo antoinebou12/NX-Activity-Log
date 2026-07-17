@@ -104,8 +104,9 @@ namespace NX {
             // Progress callback function
             ProgressCallback progressCallback;
 
-            // Return vector of PD_Sessions for given title/user IDs + time range
-            // Give a titleID of zero to include all titles
+            // Return vector of PD_Sessions for given title/user IDs + time range.
+            // Give a titleID of zero to include all titles.
+            // Sessions with no account events are attributed to the queried user.
             std::vector<PD_Session> getPDSessions(TitleID, AccountUid, u64, u64);
 
             // Counts playtime and launches for the given sessions

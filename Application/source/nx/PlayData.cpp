@@ -11,7 +11,9 @@
 
 namespace NX {
     std::vector<PD_Session> PlayData::getPDSessions(TitleID titleID, AccountUid userID, u64 start_ts, u64 end_ts) {
-        // Break each "session" apart and keep if matching titleID and userID
+        // Break each "session" apart and keep if matching titleID and userID.
+        // Sessions with no Account_Active/Inactive events (games did not require a
+        // user) are attributed to the queried/viewed user.
         std::vector<PD_Session> sessions;
         size_t a = 0;
         while (a < this->events.size()) {
@@ -24,6 +26,7 @@ namespace NX {
                     titleID_c = true;
                 }
                 bool userID_c = false;
+                bool saw_account = false;
 
                 a++;
                 bool end = false;
@@ -43,6 +46,7 @@ namespace NX {
                         // Check userID whenever account event encountered
                         case Account_Active:
                         case Account_Inactive:
+                            saw_account = true;
                             if (this->events[a]->userID == userID) {
                                 userID_c = true;
                             }
@@ -50,7 +54,7 @@ namespace NX {
 
                         // Exit indicates end of session
                         case Applet_Exit:
-                            if (time_c && titleID_c && userID_c) {
+                            if (time_c && titleID_c && (userID_c || !saw_account)) {
                                 struct PD_Session st;
                                 st.index = s;
                                 st.num = a - s + 1;
@@ -61,7 +65,7 @@ namespace NX {
 
                         // Encountering another launch also indicates end of session (due to crash)
                         case Applet_Launch:
-                            if (time_c && titleID_c && userID_c) {
+                            if (time_c && titleID_c && (userID_c || !saw_account)) {
                                 struct PD_Session st;
                                 st.index = s;
                                 st.num = a - s;
